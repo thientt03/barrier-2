@@ -9,7 +9,7 @@ const ok = ref('')
 
 const blank = () => ({
   id: '', display_code: '', card_type: 'guest', vehicle_type: '',
-  owner_name: '', owner_phone: '', vehicle_plate: '', valid_to: '',
+  owner_name: '', owner_phone: '', vehicle_plate: '', valid_to: '', notes: '',
 })
 const form = reactive(blank())
 
@@ -82,13 +82,17 @@ onMounted(load)
         <label for="c-valid">Hạn đến</label>
         <input id="c-valid" v-model="form.valid_to" type="date" />
       </div>
+      <div class="field">
+        <label for="c-notes">Ghi chú (ghi "VIP" để hiện huy hiệu ⭐)</label>
+        <input id="c-notes" v-model="form.notes" placeholder="VD: VIP - Ban quản lý" />
+      </div>
     </div>
     <button class="btn">Thêm thẻ</button>
   </form>
 
   <table>
     <thead>
-      <tr><th>Mã in</th><th>Mã hex</th><th>Loại</th><th>Chủ thẻ</th><th>Biển số</th><th>Hạn</th><th>Trạng thái</th></tr>
+      <tr><th>Mã in</th><th>Mã hex</th><th>Loại</th><th>Chủ thẻ</th><th>Biển số</th><th>Hạn</th><th>Ghi chú</th><th>Trạng thái</th></tr>
     </thead>
     <tbody>
       <tr v-for="c in cards" :key="c.id">
@@ -98,9 +102,10 @@ onMounted(load)
         <td>{{ c.owner_name }}</td>
         <td>{{ c.vehicle_plate }}</td>
         <td>{{ c.valid_to?.slice(0, 10) }}</td>
+        <td>{{ c.notes }}</td>
         <td>{{ c.status }}</td>
       </tr>
-      <tr v-if="!cards.length"><td colspan="7">Chưa có thẻ nào.</td></tr>
+      <tr v-if="!cards.length"><td colspan="8">Chưa có thẻ nào.</td></tr>
     </tbody>
   </table>
 </template>

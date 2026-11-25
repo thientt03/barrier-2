@@ -147,7 +147,7 @@ mod tests {
             ("AAAA0001", "guest", "00001", Some("motorbike"), None),
             ("AAAA0002", "monthly", "00002", Some("car"), Some("2026-12-31")),
             ("AAAA0003", "monthly", "00003", Some("car"), Some("2026-01-01")),
-            ("AAAA0004", "vip", "00004", Some("car"), None),
+            ("AAAA0004", "monthly", "00004", Some("car"), None),
         ] {
             conn.execute(
                 "INSERT INTO cards (id, card_type, display_code, vehicle_type, valid_to) VALUES (?1,?2,?3,?4,?5)",
@@ -187,7 +187,7 @@ mod tests {
     }
 
     #[test]
-    fn monthly_and_vip_are_free_and_expired_monthly_is_rejected() {
+    fn monthly_cards_are_free_and_expired_monthly_is_rejected() {
         let (mut conn, op) = setup();
         let now = at("2026-11-25 08:00:00");
         assert!(validate_entry(&conn, "AAAA0003", now).is_err()); // hết hạn

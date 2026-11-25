@@ -25,10 +25,9 @@ pub fn calc_fee(rules: &[Rule], duration_minutes: i64) -> i64 {
         .sum()
 }
 
-/// Vé VIP và vé tháng còn hạn (hoặc không giới hạn) miễn phí.
+/// Vé tháng còn hạn (hoặc không giới hạn) miễn phí. VIP chỉ là vé tháng có ghi chú "VIP".
 pub fn is_free(card_type: &str, valid_to: Option<NaiveDateTime>, at: NaiveDateTime) -> bool {
     match card_type {
-        "vip" => true,
         "monthly" => valid_to.map_or(true, |v| v >= at),
         _ => false,
     }
@@ -76,7 +75,6 @@ mod tests {
     #[test]
     fn free_rules() {
         let now = parse("2026-11-25 10:00:00").unwrap();
-        assert!(is_free("vip", None, now));
         assert!(is_free("monthly", None, now));
         assert!(is_free("monthly", parse("2026-12-01"), now));
         assert!(!is_free("monthly", parse("2026-11-01"), now));

@@ -12,5 +12,8 @@ export function formatDuration(minutes) {
 /** "2026-11-25 08:15:32" -> "08:15:32" */
 export const timeOnly = (s) => (s ? s.slice(11) : '')
 
-export const CARD_TYPE_LABEL = { monthly: 'VÉ THÁNG', guest: 'KHÁCH VÃNG LAI', vip: 'VIP' }
+export const CARD_TYPE_LABEL = { monthly: 'VÉ THÁNG', guest: 'KHÁCH VÃNG LAI' }
+
+/** VIP = vé tháng có ghi chú chứa "VIP" (spec 2.4). */
+export const isVip = (card) => /vip/i.test(card.notes || '')
 export const VEHICLE_LABEL = { motorbike: 'Xe máy', car: 'Ô tô', truck: 'Xe tải' }

@@ -17,6 +17,7 @@ pub struct CreateCardInput {
     pub vehicle_plate: Option<String>,
     pub vehicle_type: Option<String>,
     pub valid_to: Option<String>,
+    pub notes: Option<String>,
 }
 
 /// Chuỗi rỗng / toàn khoảng trắng -> None.
@@ -39,7 +40,7 @@ pub fn create_card(state: State<'_, AppState>, input: CreateCardInput) -> Result
     if id.is_empty() || display_code.is_empty() {
         return Err(AppError::msg("Vui lòng nhập mã thẻ (hex) và mã in trên thẻ"));
     }
-    if !["monthly", "guest", "vip"].contains(&input.card_type.as_str()) {
+    if !["monthly", "guest"].contains(&input.card_type.as_str()) {
         return Err(AppError::msg("Loại thẻ không hợp lệ"));
     }
     let vehicle_type = clean(input.vehicle_type);
@@ -67,7 +68,7 @@ pub fn create_card(state: State<'_, AppState>, input: CreateCardInput) -> Result
     let tx = conn.transaction()?;
     tx.execute(
         "INSERT INTO cards (id, card_type, display_code, owner_name, owner_phone, vehicle_plate, \
-         vehicle_type, valid_to) VALUES (?1,?2,?3,?4,?5,?6,?7,?8)",
+         vehicle_type, valid_to, notes) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9)",
         params![
             id,
             input.card_type,
@@ -76,7 +77,8 @@ pub fn create_card(state: State<'_, AppState>, input: CreateCardInput) -> Result
             clean(input.owner_phone),
             clean(input.vehicle_plate),
             vehicle_type,
-            valid_to
+            valid_to,
+            clean(input.notes)
         ],
     )?;
     audit::log(

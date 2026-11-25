@@ -67,7 +67,7 @@ label { display: block; font-weight: 600; margin-bottom: 4px; }
 .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; color: #fff; font-size: 13px; font-weight: 700; }
 .badge-monthly { background: var(--primary); }
 .badge-guest { background: var(--warning); }
-.badge-vip { background: #8e24aa; }
+.badge-vip { background: #ffd700; color: #5c4600; }
 
 .fee { font-size: 32px; font-weight: 800; margin: 8px 0 16px; }
 .fee.free { color: var(--success); }

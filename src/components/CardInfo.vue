@@ -1,5 +1,5 @@
 <script setup>
-import { CARD_TYPE_LABEL, VEHICLE_LABEL } from '../utils/format'
+import { CARD_TYPE_LABEL, VEHICLE_LABEL, isVip } from '../utils/format'
 
 defineProps({ card: { type: Object, required: true } })
 </script>
@@ -10,6 +10,7 @@ defineProps({ card: { type: Object, required: true } })
     <dd>
       {{ card.display_code }}
       <span class="badge" :class="`badge-${card.card_type}`">{{ CARD_TYPE_LABEL[card.card_type] }}</span>
+      <span v-if="isVip(card)" class="badge badge-vip">⭐ VIP</span>
     </dd>
     <template v-if="card.owner_name">
       <dt>Chủ thẻ</dt>
@@ -22,6 +23,10 @@ defineProps({ card: { type: Object, required: true } })
     <template v-if="card.vehicle_type">
       <dt>Loại xe</dt>
       <dd>{{ VEHICLE_LABEL[card.vehicle_type] }}</dd>
+    </template>
+    <template v-if="card.notes">
+      <dt>Ghi chú</dt>
+      <dd>{{ card.notes }}</dd>
     </template>
     <template v-if="card.valid_to">
       <dt>Hạn</dt>

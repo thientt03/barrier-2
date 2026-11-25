@@ -1,9 +1,9 @@
-# 📘 SPEC: Hệ thống quản lý bãi đỗ xe tự phát triển
+# 📘 SPEC: Hệ thống Quản lý Bãi đỗ xe — Phiên bản 2.0 (Cập nhật cuối)
 
-**Phiên bản:** 1.0 — Bản đặc tả kỹ thuật
-**Ngày:** 25/11/2026
-**Tác giả:** [Bạn]
-**Trạng thái:** Draft — sẵn sàng triển khai
+**Phiên bản:** 2.0 — Bản đặc tả kỹ thuật hoàn chỉnh
+**Ngày cập nhật:** 25/11/2026
+**Trạng thái:** ✅ Sẵn sàng triển khai
+**Thay đổi so với v1.0:** Bỏ máy in, bỏ QR, bỏ mobile app, bỏ báo cáo online, VIP = vé tháng, bỏ đa ngôn ngữ
 
 ---
 
@@ -24,6 +24,7 @@
 13. [Lộ trình phát triển](#13-lộ-trình-phát-triển)
 14. [Deployment & vận hành](#14-deployment--vận-hành)
 15. [Rủi ro & giảm thiểu](#15-rủi-ro--giảm-thiểu)
+16. [Phụ lục](#16-phụ-lục)
 
 ---
 
@@ -31,12 +32,12 @@
 
 ### 1.1 Bối cảnh
 
-Xây dựng phần mềm quản lý bãi đỗ xe **on-premise** cho các tòa nhà (chung cư, văn phòng, bãi xe tư nhân), với đặc điểm:
+Xây dựng phần mềm quản lý bãi đỗ xe **on-premise** cho các tòa nhà (chung cư, văn phòng, bãi xe tư nhân), với các đặc điểm:
 
-- Có **bảo vệ trực 24/7** tại bốt
-- **Không cần AI nhận diện biển số** — bảo vệ tự so ảnh bằng mắt
+- **Bảo vệ trực 24/7** tại bốt
+- **Không dùng AI** — camera chỉ chụp ảnh, bảo vệ tự so bằng mắt
 - **Barrier hoàn toàn độc lập** — bảo vệ bấm nút vật lý để mở
-- **Thẻ RFID** là "chìa khóa" liên kết xe vào-ra
+- **Thẻ RFID** là "chìa khóa" liên kết xe vào-ra, thay thế vé giấy hoàn toàn
 - **Desktop app** phân phối dưới dạng file `.exe`
 - **Mô hình kinh doanh:** bán license theo tòa nhà, quản lý tập trung qua license server
 
@@ -57,7 +58,8 @@ Xây dựng phần mềm quản lý bãi đỗ xe **on-premise** cho các tòa n
 | **Decoupled systems** | Phần mềm và barrier độc lập hoàn toàn, không có dây tín hiệu |
 | **Human-in-the-loop** | Bảo vệ là cầu nối duy nhất giữa phần mềm và barrier |
 | **Fail-safe** | Khi mọi thứ hỏng, vẫn có fallback thủ công (nút bấm, sổ giấy) |
-| **Offline-tolerant** | Mất mạng vẫn chạy bình thường, sync khi có mạng lại |
+| **Offline-tolerant** | Mất mạng vẫn chạy bình thường, sync license khi có mạng lại |
+| **Card-as-ticket** | Thẻ RFID chính là vé — không có vé giấy, không có QR |
 
 ---
 
@@ -74,32 +76,48 @@ Xây dựng phần mềm quản lý bãi đỗ xe **on-premise** cho các tòa n
 | M5 | Dễ deploy | Cài đặt < 15 phút/làn |
 | M6 | Hỗ trợ multi-tenant | 1 vendor quản lý N tòa nhà qua license server |
 
-### 2.2 Phạm vi
+### 2.2 Phạm vi v1.0
 
 **Trong phạm vi:**
-- Quản lý phiên đỗ xe (entry/exit)
-- Quản lý thẻ RFID (vé tháng, khách vãng lai, VIP)
-- Tính phí theo bảng giá cấu hình
-- In vé + hóa đơn
-- Báo cáo doanh thu, lưu lượng
-- License management cho vendor
-- Xử lý sự cố (mất thẻ, mất mạng, mất điện)
 
-**Ngoài phạm vi (không làm trong v1.0):**
-- AI/OCR nhận diện biển số
-- App mobile cho khách hàng
-- Thanh toán online (chỉ thu tiền mặt)
-- Multi-tenant cloud (mỗi khách dùng bản local)
-- Tích hợp camera an ninh bên ngoài
-- Đặt chỗ trước
+- ✅ Quản lý phiên đỗ xe (entry/exit)
+- ✅ Quản lý thẻ RFID với **2 loại**: `monthly` (vé tháng, bao gồm VIP) và `guest` (khách vãng lai)
+- ✅ Tính phí theo bảng giá cấu hình
+- ✅ Hiển thị thông tin lên màn hình bảo vệ (thay thế vé giấy)
+- ✅ Báo cáo doanh thu, lưu lượng (xem tại bốt)
+- ✅ License management qua license server
+- ✅ Xử lý sự cố (mất thẻ, mất mạng, mất điện)
+- ✅ Giao diện tiếng Việt
+- ✅ Desktop app cho cả bảo vệ và manager
+
+**Ngoài phạm vi v1.0 (đã chốt bỏ):**
+
+- ❌ AI/OCR nhận diện biển số
+- ❌ In vé giấy / hóa đơn giấy
+- ❌ Vé QR code
+- ❌ App mobile
+- ❌ Báo cáo realtime online (cloud dashboard)
+- ❌ Đa ngôn ngữ
+- ❌ Thanh toán online
+- ❌ Đặt chỗ trước
+- ❌ Tích hợp camera an ninh bên ngoài
 
 ### 2.3 Đối tượng người dùng
 
 | Vai trò | Số lượng/tòa nhà | Sử dụng |
 |---|---|---|
-| **Bảo vệ** | 1-4 | Màn hình bốt, xử lý entry/exit |
-| **Quản lý** | 1 | Xem báo cáo, quản lý thẻ, bảng giá |
-| **Vendor admin** | 1 (tổng) | License server, quản lý khách hàng |
+| **Bảo vệ** (staff) | 1-4 | Màn hình bốt, xử lý entry/exit |
+| **Quản lý** (manager) | 1 | Xem báo cáo, quản lý thẻ, bảng giá — dùng chung desktop app |
+| **Vendor admin** | 1 (tổng) | License server (web app riêng ở cloud) |
+
+### 2.4 Phân loại thẻ (chốt)
+
+| Loại thẻ | Đối tượng | Phí | Thời hạn |
+|---|---|---|---|
+| **Vé tháng** (`monthly`) | Cư dân, nhân viên tòa nhà, **VIP** | Miễn phí 24/7 khi còn hạn | Có `valid_to` |
+| **Khách vãng lai** (`guest`) | Khách đến chơi, giao hàng | Tính theo bảng giá | Không có `valid_to` |
+
+> **Ghi chú về VIP:** VIP là vé tháng đặc biệt, phân biệt qua trường `notes` (ví dụ: "VIP - Ban quản lý"). Không có logic tính phí riêng — vẫn miễn phí như vé tháng thường. UI hiển thị badge "⭐ VIP" nếu `notes` chứa "VIP".
 
 ---
 
@@ -168,7 +186,7 @@ Xây dựng phần mềm quản lý bãi đỗ xe **on-premise** cho các tòa n
 | **File storage** | Lưu ảnh vào/ra | Filesystem local |
 | **License server** | Quản lý license đa khách hàng | FastAPI + PostgreSQL (cloud) |
 | **Camera Dahua** | Chụp ảnh xe | RTSP + HTTP snapshot |
-| **Đầu đọc RFID** | Đọc mã thẻ | USB HID hoặc RS232 |
+| **Đầu đọc RFID** | Đọc mã thẻ | USB HID |
 | **Barrier BS-306** | Chắn xe | Điều khiển bằng nút bấm vật lý |
 
 ---
@@ -194,16 +212,17 @@ Xây dựng phần mềm quản lý bãi đỗ xe **on-premise** cho các tòa n
 | 8 | Màn hình | 21-24" hoặc tablet | 1 | 2.000.000 – 4.000.000 | Cho bảo vệ |
 | 9 | Switch PoE | 8-port PoE+ | 1 | 800.000 – 1.500.000 | Cấp nguồn camera |
 | 10 | Dây mạng Cat6 | Cuộn 100m | 1 | 500.000 – 800.000 | Nối camera |
-| 11 | Máy in nhiệt | 80mm, USB | 1 | 1.500.000 – 2.000.000 | In vé + hóa đơn (tùy chọn) |
-| 12 | UPS | 600–1000VA | 1 | 1.000.000 – 2.000.000 | Bảo vệ mini PC khi mất điện (tùy chọn) |
+| 11 | UPS | 600–1000VA | 1 | 1.000.000 – 2.000.000 | Bảo vệ mini PC khi mất điện (tùy chọn) |
+
+> **Đã bỏ:** Máy in nhiệt (theo quyết định v2.0)
 
 ### 4.3 Tổng chi phí
 
 | Hạng mục | Chi phí |
 |---|---|
 | Phần cứng/làn (mục 1-6) | **~14 – 17 triệu** |
-| Phần cứng dùng chung (mục 7-12) | **~9 – 15 triệu** |
-| **Tổng cho 1 làn + bộ chung** | **~23 – 32 triệu** |
+| Phần cứng dùng chung (mục 7-11) | **~7.8 – 13.3 triệu** |
+| **Tổng cho 1 làn + bộ chung** | **~22 – 30 triệu** |
 | Thêm làn 2 (chỉ mục 1-6) | +14 – 17 triệu |
 
 ### 4.4 Ghi chú mua hàng
@@ -224,7 +243,6 @@ Xây dựng phần mềm quản lý bãi đỗ xe **on-premise** cho các tòa n
 **Mini PC:**
 - Cần ít nhất **2 cổng USB** (1 cho đầu đọc entry, 1 cho exit) — hoặc dùng USB hub
 - Cần **LAN port** để kết nối switch PoE
-- Nếu có ý định thêm AI sau này → chọn CPU Intel i5 gen 12+
 
 ---
 
@@ -250,16 +268,19 @@ tauri = { version = "2", features = ["shell-open"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 rusqlite = { version = "0.31", features = ["bundled"] }
-serialport = "4"           # Đọc USB RFID (RS232)
+serialport = "4"           # Đọc USB RFID (RS232) hoặc HID
 uuid = { version = "1", features = ["v4"] }
 chrono = "0.4"             # Xử lý datetime
 reqwest = { version = "0.12", features = ["json"] }
 tokio = { version = "1", features = ["full"] }
 image = "0.25"             # Xử lý ảnh
-anyhow = "1"               # Error handling
+anyhow = "1"
 thiserror = "1"
 tracing = "0.1"
 tracing-subscriber = "0.3"
+bcrypt = "0.15"            # Hash password
+sha2 = "0.10"              # Hardware fingerprint
+hex = "0.4"
 ```
 
 ### 5.3 License server (cloud)
@@ -297,7 +318,7 @@ tracing-subscriber = "0.3"
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE cards (
     id              TEXT PRIMARY KEY,           -- Mã hex từ đầu đọc: "A1B2C3D4"
-    card_type       TEXT NOT NULL CHECK(card_type IN ('monthly', 'guest', 'vip')),
+    card_type       TEXT NOT NULL CHECK(card_type IN ('monthly', 'guest')),
     display_code    TEXT NOT NULL,              -- Mã in trên thẻ: "00123"
     owner_name      TEXT,                       -- Tên chủ thẻ (vé tháng)
     owner_phone     TEXT,                       -- SĐT
@@ -306,7 +327,7 @@ CREATE TABLE cards (
     valid_from      TIMESTAMP,
     valid_to        TIMESTAMP,                  -- NULL = vĩnh viễn
     status          TEXT DEFAULT 'active' CHECK(status IN ('active', 'lost', 'expired', 'blocked')),
-    notes           TEXT,
+    notes           TEXT,                       -- Ghi chú (VD: "VIP - Ban quản lý")
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -322,15 +343,15 @@ CREATE TABLE sessions (
     card_id             TEXT NOT NULL REFERENCES cards(id),
     lane                TEXT NOT NULL,          -- 'entry_car', 'entry_bike', 'exit_car', 'exit_bike'
     entry_time          TIMESTAMP NOT NULL,
-    entry_photo_path    TEXT,                   -- Đường dẫn tương đối: "photos/2026/11/25/entry_xxx.jpg"
+    entry_photo_path    TEXT,                   -- Đường dẫn tương đối
     entry_operator      TEXT,                   -- ID bảo vệ đã xác nhận
     exit_time           TIMESTAMP,
     exit_photo_path     TEXT,
     exit_operator       TEXT,
     duration_minutes    INTEGER,                -- Tính sẵn khi đóng session
-    fee                 INTEGER DEFAULT 0,      -- VNĐ
+    fee                 INTEGER DEFAULT 0,      -- VNĐ (phí tính được)
     fee_collected       INTEGER DEFAULT 0,      -- Thực thu
-    payment_method      TEXT DEFAULT 'cash' CHECK(payment_method IN ('cash', 'transfer', 'free')),
+    payment_method      TEXT DEFAULT 'cash' CHECK(payment_method IN ('cash', 'free')),
     status              TEXT DEFAULT 'active' CHECK(status IN ('active', 'completed', 'cancelled', 'lost_card')),
     notes               TEXT,
     created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -375,7 +396,7 @@ CREATE TABLE audit_logs (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
     session_id      TEXT REFERENCES sessions(id),
     operator_id     TEXT REFERENCES operators(id),
-    action          TEXT NOT NULL,              -- 'entry', 'exit', 'override', 'card_lost', 'fee_adjust', 'login'
+    action          TEXT NOT NULL,              -- 'entry', 'exit', 'override', 'card_lost', 'fee_adjust', 'login', 'logout'
     metadata        TEXT,                       -- JSON string
     ip_address      TEXT,
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -389,7 +410,7 @@ CREATE INDEX idx_audit_action ON audit_logs(action);
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE sync_queue (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    event_type      TEXT NOT NULL,              -- 'license_check', 'usage_report', 'crash_report'
+    event_type      TEXT NOT NULL,              -- 'license_check', 'crash_report'
     payload         TEXT NOT NULL,              -- JSON
     status          TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'synced', 'failed')),
     retry_count     INTEGER DEFAULT 0,
@@ -408,7 +429,8 @@ CREATE TABLE app_config (
 );
 -- Keys: license_key, hardware_id, tenant_name, last_phone_home,
 --       grace_period_until, camera_entry_url, camera_exit_url,
---       card_reader_entry_port, card_reader_exit_port
+--       card_reader_entry_port, card_reader_exit_port,
+--       monthly_overnight_fee (optional)
 ```
 
 ### 6.2 Schema PostgreSQL (license server)
@@ -419,7 +441,7 @@ CREATE TABLE app_config (
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE customers (
     id              UUID PRIMARY KEY,
-    name            VARCHAR(200) NOT NULL,      -- "Chung cư ABC"
+    name            VARCHAR(200) NOT NULL,
     contact_name    VARCHAR(100),
     contact_email   VARCHAR(200),
     contact_phone   VARCHAR(20),
@@ -434,8 +456,8 @@ CREATE TABLE customers (
 CREATE TABLE licenses (
     id                  UUID PRIMARY KEY,
     customer_id         UUID REFERENCES customers(id),
-    license_key         VARCHAR(50) UNIQUE NOT NULL,   -- "XXXX-YYYY-ZZZZ-WWWW"
-    hardware_id         VARCHAR(128),                  -- SHA256 fingerprint
+    license_key         VARCHAR(50) UNIQUE NOT NULL,
+    hardware_id         VARCHAR(128),
     max_lanes           INTEGER DEFAULT 2,
     status              VARCHAR(20) DEFAULT 'active' CHECK(status IN ('active', 'suspended', 'revoked', 'expired')),
     valid_from          TIMESTAMPTZ NOT NULL,
@@ -483,7 +505,7 @@ CREATE TABLE admin_users (
 -- ═══════════════════════════════════════════════════════════════
 CREATE TABLE releases (
     id              UUID PRIMARY KEY,
-    version         VARCHAR(20) NOT NULL,       -- "1.2.3"
+    version         VARCHAR(20) NOT NULL,
     platform        VARCHAR(20) DEFAULT 'windows-x64',
     download_url    TEXT NOT NULL,
     changelog       TEXT,
@@ -533,7 +555,7 @@ CREATE TABLE releases (
                        ▼
 ┌──────────────────────────────────────────────────────────────┐
 │ BƯỚC 4: Backend xử lý                                        │
-│   ├─ Kiểm tra thẻ có tồn tại? (query cards table)            │
+│   ├─ Kiểm tra thẻ có tồn tại?                                │
 │   │   └─ Không có → CẢNH BÁO "Thẻ không hợp lệ"              │
 │   ├─ Kiểm tra status = 'active'?                             │
 │   │   └─ Không → CẢNH BÁO "Thẻ bị khóa/mất"                  │
@@ -542,7 +564,7 @@ CREATE TABLE releases (
 │   │   └─ Hết hạn → CẢNH BÁO "Vé tháng hết hạn"               │
 │   ├─ Nếu card_type = 'guest': OK (cho vào)                   │
 │   └─ Kiểm tra thẻ có đang có session active?                 │
-│       └─ Có → CẢNH BÁO "Thẻ đang trong bãi" (chưa ra)        │
+│       └─ Có → CẢNH BÁO "Thẻ đang trong bãi (chưa ra)"        │
 └──────────────────────┬───────────────────────────────────────┘
                        ▼
 ┌──────────────────────────────────────────────────────────────┐
@@ -555,27 +577,19 @@ CREATE TABLE releases (
 └──────────────────────┬───────────────────────────────────────┘
                        ▼
 ┌──────────────────────────────────────────────────────────────┐
-│ BƯỚC 6: (Tùy chọn) In vé cho khách                           │
-│   - Vé giấy 80mm, gồm:                                       │
-│     * Mã vé (session_id 8 ký tự đầu)                         │
-│     * Mã thẻ (display_code)                                  │
-│     * Giờ vào                                                 │
-│     * Loại vé                                                 │
-│     * QR code (link đến session — tùy chọn)                  │
-└──────────────────────┬───────────────────────────────────────┘
-                       ▼
-┌──────────────────────────────────────────────────────────────┐
-│ BƯỚC 7: Ghi audit log                                        │
+│ BƯỚC 6: Ghi audit log                                        │
 │   INSERT INTO audit_logs (session_id, operator_id, action,   │
-│     metadata={card_id, lane, fee_policy='none'})             │
+│     metadata={card_id, lane})                                │
 └──────────────────────┬───────────────────────────────────────┘
                        ▼
 ┌──────────────────────────────────────────────────────────────┐
-│ BƯỚC 8: 👤 BẢO VỆ bấm NÚT VẬT LÝ mở barrier                  │
+│ BƯỚC 7: 👤 BẢO VỆ bấm NÚT VẬT LÝ mở barrier                  │
 │   - Phần mềm KHÔNG điều khiển barrier                        │
 │   - Barrier do bảo vệ điều khiển trực tiếp                   │
 └──────────────────────────────────────────────────────────────┘
 ```
+
+> **Lưu ý v2.0:** Đã bỏ bước "In vé cho khách" — thẻ RFID chính là vé. Khách không cầm vé giấy.
 
 ### 7.2 Exit — Xe ra bãi
 
@@ -605,7 +619,6 @@ CREATE TABLE releases (
 │ BƯỚC 5: Tính phí                                             │
 │   duration_min = (now() - entry_time) / 60                   │
 │   ├─ Nếu card_type = 'monthly' và còn hạn → fee = 0          │
-│   ├─ Nếu card_type = 'vip' → fee = 0                         │
 │   └─ Nếu card_type = 'guest' hoặc 'monthly' hết hạn:         │
 │       fee = sum theo bảng pricing_rules                      │
 └──────────────────────┬───────────────────────────────────────┘
@@ -635,24 +648,20 @@ CREATE TABLE releases (
 ┌──────────────────────────────────────────────────────────────┐
 │ BƯỚC 8: Cập nhật session                                     │
 │   UPDATE sessions SET                                        │
-│     exit_time=now(),                                         │
-│     exit_photo_path,                                         │
-│     exit_operator,                                           │
+│     exit_time=now(), exit_photo_path, exit_operator,         │
 │     duration_minutes=?, fee=?, fee_collected=?,              │
 │     status='completed'                                       │
 │   WHERE id=?                                                 │
 │   - Di chuyển ảnh từ temp/ → photos/YYYY/MM/DD/              │
+│   - Ghi audit log exit                                       │
 └──────────────────────┬───────────────────────────────────────┘
                        ▼
 ┌──────────────────────────────────────────────────────────────┐
-│ BƯỚC 9: In hóa đơn (nếu cần)                                 │
-│   Ghi audit log exit                                         │
-└──────────────────────┬───────────────────────────────────────┘
-                       ▼
-┌──────────────────────────────────────────────────────────────┐
-│ BƯỚC 10: 👤 BẢO VỆ bấm NÚT VẬT LÝ mở barrier                 │
+│ BƯỚC 9: 👤 BẢO VỆ bấm NÚT VẬT LÝ mở barrier                  │
 └──────────────────────────────────────────────────────────────┘
 ```
+
+> **Lưu ý v2.0:** Đã bỏ bước "In hóa đơn" — hóa đơn hiển thị trên màn hình bảo vệ, khách xem qua màn hình hoặc bảo vệ đọc số tiền.
 
 ### 7.3 Tính phí — Chi tiết
 
@@ -674,18 +683,23 @@ CREATE TABLE releases (
 
 **Công thức tính:**
 
-```
-if card_type in ('monthly' and valid) or card_type == 'vip':
-    return 0
-
-total = 0
-for rule in pricing_rules where vehicle_type = card.vehicle_type and is_active = 1:
-    overlap = min(duration_minutes, rule.minute_to) - rule.minute_from
-    if overlap > 0:
-        units = ceil(overlap / rule.unit_minutes)
-        total += units * rule.price_per_unit
-
-return total
+```rust
+fn calculate_fee(card: &Card, duration_minutes: i64, rules: &[PricingRule]) -> i64 {
+    // Vé tháng còn hạn → miễn phí
+    if card.card_type == "monthly" && card.is_valid() {
+        return 0;
+    }
+    // Vé tháng hết hạn hoặc khách → tính phí theo bảng giá
+    let mut total = 0i64;
+    for rule in rules.iter().filter(|r| r.is_active && r.vehicle_type == card.vehicle_type) {
+        let overlap = duration_minutes.min(rule.minute_to) - rule.minute_from;
+        if overlap > 0 {
+            let units = (overlap + rule.unit_minutes - 1) / rule.unit_minutes; // ceil
+            total += units * rule.price_per_unit;
+        }
+    }
+    total
+}
 ```
 
 **Test case:**
@@ -724,6 +738,7 @@ BƯỚC 9: Ghi audit:
 | **Camera hỏng** | Bảo vệ dùng điện thoại chụp, upload thủ công qua app |
 | **Khách quỵt tiền** | Bảo vệ từ chối mở barrier. Ghi audit `refuse_exit` |
 | **Xe ra không quẹt thẻ** | Bảo vệ nhập thủ công mã thẻ nếu biết, hoặc coi như mất thẻ |
+| **Vé tháng qua đêm** | Mặc định miễn phí 24/7 (không phụ phí) |
 
 ---
 
@@ -765,14 +780,21 @@ BƯỚC 9: Ghi audit:
 │      Chủ thẻ: Nguyễn Văn A — 0901 234 567                   │
 │      Biển số: 51A-123.45                                     │
 │                                                              │
-│  ┌──────────────┐ ┌──────────────┐ ┌──────────────────┐    │
-│  │ 📸 Chụp lại  │ │ 🖨️ In vé     │ │ ✅ XÁC NHẬN VÀO  │    │
-│  │   [F5]       │ │   [F6]       │ │   (Enter)        │    │
-│  └──────────────┘ └──────────────┘ └──────────────────┘    │
+│  ┌──────────────┐ ┌──────────────────────────┐              │
+│  │ 📸 Chụp lại  │ │ ✅ XÁC NHẬN VÀO (Enter)  │              │
+│  │   [F5]       │ │                          │              │
+│  └──────────────┘ └──────────────────────────┘              │
 │                                                              │
-│  ═══════════════════════════════════════════════════════    │
 │  💡 SAU KHI XÁC NHẬN: Bấm nút vật lý để mở barrier          │
 └──────────────────────────────────────────────────────────────┘
+```
+
+Nếu thẻ có notes chứa "VIP":
+
+```
+│  🎫 Thẻ quẹt: 00124 (VÉ THÁNG — còn hạn 45 ngày)  ⭐ VIP    │
+│      Chủ thẻ: Trần Thị B                                     │
+│      Ghi chú: Ban quản lý                                    │
 ```
 
 ### 8.3 Mockup S3 — Exit Lane
@@ -804,7 +826,7 @@ BƯỚC 9: Ghi audit:
 └──────────────────────────────────────────────────────────────┘
 ```
 
-### 8.4 Keyboard shortcuts (bắt buộc)
+### 8.4 Keyboard shortcuts
 
 | Phím | Chức năng | Màn hình |
 |---|---|---|
@@ -812,10 +834,10 @@ BƯỚC 9: Ghi audit:
 | `Esc` | Từ chối | S2, S3 |
 | `F2` | Sửa mã thẻ | S2, S3 |
 | `F5` | Chụp lại ảnh | S2, S3 |
-| `F6` | In vé | S2 |
 | `F7` | Mở màn hình mất thẻ | S3 |
-| `F9` | In hóa đơn | S3 |
 | `F12` | Xem audit log nhanh | Tất cả |
+
+> **Đã bỏ:** F6 (In vé), F9 (In hóa đơn)
 
 ### 8.5 Design system
 
@@ -825,10 +847,11 @@ BƯỚC 9: Ghi audit:
 | **Màu thành công** | `#43A047` (green) |
 | **Màu cảnh báo** | `#FB8C00` (orange) |
 | **Màu nguy hiểm** | `#E53935` (red) |
+| **Màu VIP** | `#FFD700` (gold) |
 | **Font** | Inter hoặc Roboto, size 14-16px |
 | **Kích thước nút chính** | ≥ 48×48px (dễ bấm cảm ứng) |
 | **Độ tương phản** | WCAG AA (4.5:1) |
-| **Ngôn ngữ** | Tiếng Việt (mặc định) |
+| **Ngôn ngữ** | Tiếng Việt (hard-code) |
 
 ---
 
@@ -841,10 +864,10 @@ parking-app/
 │
 ├── src-tauri/                        # ═══ RUST BACKEND ═══
 │   ├── Cargo.toml
-│   ├── tauri.conf.json               # Cấu hình Tauri
+│   ├── tauri.conf.json
 │   ├── icons/
 │   └── src/
-│       ├── main.rs                   # Entry point
+│       ├── main.rs
 │       ├── lib.rs
 │       │
 │       ├── commands/                 # Tauri IPC commands
@@ -891,14 +914,13 @@ parking-app/
 │       │
 │       ├── license/                  # ═══ LICENSE ═══
 │       │   ├── mod.rs
-│       │   ├── phone_home.rs         # Gọi license server
+│       │   ├── phone_home.rs
 │       │   ├── hardware_fingerprint.rs
 │       │   └── grace_period.rs
 │       │
 │       └── utils/
 │           ├── mod.rs
 │           ├── image.rs              # Lưu ảnh, resize
-│           ├── printer.rs            # In nhiệt ESC/POS
 │           └── logger.rs
 │
 ├── src/                              # ═══ VUE FRONTEND ═══
@@ -936,6 +958,7 @@ parking-app/
 │   │   ├── CardInfo.vue
 │   │   ├── FeeDisplay.vue
 │   │   ├── ConnectionBadge.vue
+│   │   ├── VipBadge.vue
 │   │   └── ...
 │   └── assets/
 │
@@ -944,6 +967,8 @@ parking-app/
 ├── pnpm-lock.yaml
 └── README.md
 ```
+
+> **Đã bỏ:** `utils/printer.rs` (không còn in nhiệt)
 
 ### 9.2 Ví dụ code Rust — Entry command
 
@@ -969,6 +994,7 @@ pub struct CreateEntryResult {
     pub card_type: String,
     pub owner_name: Option<String>,
     pub vehicle_plate: Option<String>,
+    pub is_vip: bool,
     pub entry_time: String,
     pub photo_path: String,
 }
@@ -1017,12 +1043,16 @@ pub async fn create_entry(
     audit_service::log(&db, Some(&session_id), Some(&input.operator_id),
                        "entry", Some(format!("card_id={}", input.card_id)))?;
     
+    // 7. Detect VIP (qua notes)
+    let is_vip = card.notes.as_deref().map(|n| n.to_lowercase().contains("vip")).unwrap_or(false);
+    
     Ok(CreateEntryResult {
         session_id,
         card_display_code: card.display_code,
         card_type: card.card_type,
         owner_name: card.owner_name,
         vehicle_plate: card.vehicle_plate,
+        is_vip,
         entry_time: entry_time.format("%H:%M:%S").to_string(),
         photo_path,
     })
@@ -1036,18 +1066,18 @@ pub async fn create_entry(
 import { ref, onMounted, onUnmounted } from 'vue'
 import { invoke } from '@tauri-apps/api/tauri'
 import { listen } from '@tauri-apps/api/event'
+import CardInfo from '@/components/CardInfo.vue'
+import VipBadge from '@/components/VipBadge.vue'
+import ConnectionBadge from '@/components/ConnectionBadge.vue'
 
 const currentSession = ref(null)
-const cardInfo = ref(null)
 const loading = ref(false)
 const errorMsg = ref('')
 
-// Lắng nghe sự kiện quẹt thẻ từ Rust
 let unlisten
 onMounted(async () => {
   unlisten = await listen('card-tapped', async (event) => {
-    const cardId = event.payload.card_id
-    await handleCardTap(cardId)
+    await handleCardTap(event.payload.card_id)
   })
 })
 onUnmounted(() => unlisten?.())
@@ -1060,7 +1090,6 @@ async function handleCardTap(cardId) {
       input: { card_id: cardId, lane: 'entry_car', operator_id: 'current_user' }
     })
     currentSession.value = result
-    cardInfo.value = result
   } catch (e) {
     errorMsg.value = e.toString()
   } finally {
@@ -1071,7 +1100,6 @@ async function handleCardTap(cardId) {
 async function confirmEntry() {
   await invoke('confirm_entry', { sessionId: currentSession.value.session_id })
   currentSession.value = null
-  cardInfo.value = null
 }
 
 async function captureAgain() {
@@ -1084,11 +1112,9 @@ async function captureAgain() {
 
 function reject() {
   currentSession.value = null
-  cardInfo.value = null
   errorMsg.value = ''
 }
 
-// Keyboard shortcuts
 function onKeydown(e) {
   if (e.key === 'Enter' && currentSession.value) confirmEntry()
   if (e.key === 'Escape') reject()
@@ -1102,7 +1128,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
   <div class="entry-lane">
     <header>
       <h1>BỐT VÀO — LÀN Ô TÔ</h1>
-      <ConnectionBadges />
+      <ConnectionBadge />
     </header>
 
     <div v-if="errorMsg" class="alert alert-error">
@@ -1121,7 +1147,9 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
           :card-type="currentSession.card_type"
           :owner="currentSession.owner_name"
           :plate="currentSession.vehicle_plate"
-        />
+        >
+          <VipBadge v-if="currentSession.is_vip" />
+        </CardInfo>
         
         <div class="actions">
           <button @click="captureAgain" class="btn-secondary">📸 Chụp lại (F5)</button>
@@ -1160,7 +1188,6 @@ VENDOR                        LICENSE SERVER                CUSTOMER (app)
   │                                  │ 4. App khởi động lần đầu   │
   │                                  │←───────────────────────────┤
   │                                  │    POST /api/activate       │
-  │                                  │    {license_key, hw_id}     │
   │                                  │                            │
   │                                  │ 5. Server ghi hw_id        │
   │                                  │    Trả về OK + expires_at   │
@@ -1168,7 +1195,6 @@ VENDOR                        LICENSE SERVER                CUSTOMER (app)
   │                                  │                            │
   │                                  │ 6. Mỗi 24h phone-home      │
   │                                  │←───────────────────────────┤
-  │                                  │    POST /api/verify         │
   │                                  │                            │
   │                                  │ 7. Server check status      │
   │                                  │    Trả về valid/expired     │
@@ -1183,7 +1209,6 @@ VENDOR                        LICENSE SERVER                CUSTOMER (app)
 | `POST` | `/api/verify` | Phone-home định kỳ (24h) |
 | `POST` | `/api/change-hardware` | Đổi máy (cần admin duyệt) |
 | `GET` | `/api/releases/latest` | Check update mới |
-| `POST` | `/api/usage` | Báo cáo usage (số session, số xe, etc.) |
 | `POST` | `/api/crash-report` | Báo cáo lỗi (opt-in) |
 
 ### 10.3 Payload mẫu
@@ -1207,17 +1232,7 @@ POST /api/activate
   "expires_at": "2027-11-25T00:00:00Z",
   "grace_period_days": 30,
   "max_lanes": 2,
-  "features": ["basic", "reports", "printer"]
-}
-```
-
-**Verify request (mỗi 24h):**
-```json
-POST /api/verify
-{
-  "license_key": "XXXX-YYYY-ZZZZ-WWWW",
-  "hardware_id": "sha256:a1b2c3d4e5f6...",
-  "app_version": "1.0.0"
+  "features": ["basic", "reports"]
 }
 ```
 
@@ -1237,9 +1252,9 @@ POST /api/verify
 |---|---|
 | License hợp lệ, check-in < 24h | Chạy bình thường |
 | License hợp lệ, check-in < 7 ngày | Chạy bình thường (offline OK) |
-| License hợp lệ, check-in 7-30 ngày | Chạy + banner vàng "Sắp mất kết nối, vui lòng kết nối Internet" |
-| License hợp lệ, check-in 30-60 ngày | Chạy + banner đỏ "Mất kết nối lâu, sắp bị khóa" |
-| License hợp lệ, check-in > 60 ngày | **Khóa app**, chỉ cho export dữ liệu + in báo cáo |
+| License hợp lệ, check-in 7-30 ngày | Chạy + banner vàng "Sắp mất kết nối" |
+| License hợp lệ, check-in 30-60 ngày | Chạy + banner đỏ "Sắp bị khóa" |
+| License hợp lệ, check-in > 60 ngày | **Khóa app**, chỉ cho export dữ liệu |
 | License bị suspend (server) | Chạy trong grace_period_until |
 | License hết hạn | Khóa ngay, hiển thị thông báo gia hạn |
 
@@ -1255,12 +1270,10 @@ pub fn get_hardware_id() -> String {
         hasher.update(mac.to_string().as_bytes());
     }
     
-    // Serial ổ cứng (Windows: WMI, Linux: /sys/block/*/serial)
+    // Serial ổ cứng
     #[cfg(target_os = "windows")]
-    {
-        if let Ok(serial) = get_disk_serial() {
-            hasher.update(serial.as_bytes());
-        }
+    if let Ok(serial) = get_disk_serial() {
+        hasher.update(serial.as_bytes());
     }
     
     // CPU ID
@@ -1299,16 +1312,9 @@ pub fn get_hardware_id() -> String {
 
 **Khi có mạng lại:**
 - Auto phone-home trong vòng 60 giây
-- Đẩy `sync_queue` (nếu có)
 - Xóa banner
 
-### 11.3 Sync queue (nếu cần báo cáo lên cloud)
-
-Với v1.0, **không có sync queue** — vì DB local là source of truth. Chỉ sync **license check-in** và **crash report** (opt-in).
-
-Nếu sau này muốn có dashboard tập trung cho vendor xem tất cả khách → thêm module sync (không bắt buộc).
-
-### 11.4 Backup tự động
+### 11.3 Backup tự động
 
 ```rust
 // Chạy hàng ngày lúc 02:00
@@ -1316,9 +1322,7 @@ fn daily_backup() -> Result<()> {
     let timestamp = chrono::Local::now().format("%Y-%m-%d");
     let backup_path = format!("backups/parking-{}.db", timestamp);
     std::fs::copy("parking.db", backup_path)?;
-    
-    // Giữ 30 bản gần nhất
-    cleanup_old_backups(30)?;
+    cleanup_old_backups(30)?;  // Giữ 30 bản gần nhất
     Ok(())
 }
 ```
@@ -1361,7 +1365,7 @@ Mọi hành động sau **phải** ghi audit:
 
 - Login, logout, failed login
 - Create/complete/cancel session
-- Override (mở barrier thủ công cho khách quỵt, mất thẻ, etc.)
+- Override (mở barrier thủ công cho khách quỵt, mất thẻ)
 - Sửa mã thẻ thủ công
 - Điều chỉnh phí
 - CRUD thẻ, bảng giá, nhân viên
@@ -1381,26 +1385,17 @@ Mọi hành động sau **phải** ghi audit:
 
 ### 13.1 Milestones
 
-#### **Milestone 1: PoC — Chứng minh kỹ thuật** (2-3 tuần)
-
-**Mục tiêu:** Chứng minh các mảnh ghép hardware + software hoạt động được với nhau.
+#### **Milestone 1: PoC — Chứng minh kỹ thuật** (2 tuần)
 
 **Deliverables:**
 - [ ] Tauri app skeleton chạy được trên mini PC
 - [ ] Đọc mã thẻ RFID qua USB, hiển thị lên UI
 - [ ] Chụp ảnh từ camera Dahua qua RTSP, lưu file
-- [ ] SQLite kết nối OK, tạo bảng cơ bản
+- [ ] SQLite kết nối OK, tạo bảng `cards`, `sessions`
 - [ ] Mockup UI 2 màn hình (entry/exit)
 - [ ] **Test thực tế:** quẹt thẻ → hiện ảnh → lưu DB → hiển thị
 
-**Rủi ro cần kiểm chứng:**
-- Đầu đọc thẻ USB HID có hoạt động ổn định không
-- Camera Dahua có ổn định trong lấy ảnh không (độ trễ, chất lượng ảnh)
-- Tauri build ra .exe có chạy được không
-
-#### **Milestone 2: MVP — Luồng cơ bản end-to-end** (4-6 tuần)
-
-**Mục tiêu:** Bảo vệ có thể dùng phần mềm thay sổ giấy.
+#### **Milestone 2: MVP — Luồng cơ bản end-to-end** (3-4 tuần)
 
 **Deliverables:**
 - [ ] Database schema đầy đủ (6 bảng)
@@ -1411,19 +1406,14 @@ Mọi hành động sau **phải** ghi audit:
 - [ ] Audit log cơ bản
 - [ ] **Test thực tế:** 2 BS-306 + 2 camera + 2 đầu đọc → 1 tuần vận hành thử
 
-**Definition of done:**
-- Bảo vệ chạy được 1 ca trực hoàn chỉnh mà không cần support
-- Không có data loss khi tắt/mở app
-
-#### **Milestone 3: Hoàn thiện nghiệp vụ** (4-6 tuần)
+#### **Milestone 3: Hoàn thiện nghiệp vụ** (3-4 tuần)
 
 **Deliverables:**
-- [ ] CRUD thẻ (thêm, sửa, xóa, khóa)
+- [ ] CRUD thẻ (thêm, sửa, xóa, khóa) — có hỗ trợ notes VIP
 - [ ] CRUD bảng giá
 - [ ] Quản lý nhân viên
 - [ ] Màn hình mất thẻ
-- [ ] In vé + in hóa đơn (máy in nhiệt)
-- [ ] Báo cáo doanh thu (ngày, ca, tháng)
+- [ ] Báo cáo doanh thu (ngày, ca, tháng) — xem tại bốt
 - [ ] Export Excel/PDF
 - [ ] Audit log đầy đủ + màn hình xem
 - [ ] Backup tự động
@@ -1439,13 +1429,13 @@ Mọi hành động sau **phải** ghi audit:
 - [ ] Auto-updater (Tauri built-in)
 - [ ] Build installer .exe + .msi
 
-#### **Milestone 5: Ổn định & bàn giao** (2-3 tuần)
+#### **Milestone 5: Ổn định & bàn giao** (2 tuần)
 
 **Deliverables:**
 - [ ] Test tất cả kịch bản sự cố (mất mạng, mất điện, mất thẻ)
 - [ ] Performance test (100 xe/ngày)
 - [ ] Tài liệu hướng dẫn sử dụng (cho bảo vệ)
-- [ ] Tài liệu kỹ thuật (cho bạn maintain)
+- [ ] Tài liệu kỹ thuật (cho maintain)
 - [ ] Video hướng dẫn cài đặt
 - [ ] Pilot 1 tòa nhà 2 tuần → fix bug → release v1.0
 
@@ -1453,12 +1443,14 @@ Mọi hành động sau **phải** ghi audit:
 
 | Milestone | Thời gian | Tích lũy |
 |---|---|---|
-| M1: PoC | 2-3 tuần | 3 tuần |
-| M2: MVP | 4-6 tuần | 9 tuần |
-| M3: Hoàn thiện | 4-6 tuần | 15 tuần |
-| M4: License | 2-3 tuần | 18 tuần |
-| M5: Ổn định | 2-3 tuần | 21 tuần |
-| **Tổng** | | **~5 tháng** |
+| M1: PoC | 2 tuần | 2 tuần |
+| M2: MVP | 3-4 tuần | 5-6 tuần |
+| M3: Hoàn thiện | 3-4 tuần | 8-10 tuần |
+| M4: License | 2-3 tuần | 10-13 tuần |
+| M5: Ổn định | 2 tuần | 12-15 tuần |
+| **Tổng** | | **~3 – 3.5 tháng** |
+
+> **So với v1.0 (5 tháng):** Tiết kiệm ~1.5 tháng nhờ bỏ máy in, QR, mobile app, báo cáo online, i18n.
 
 ---
 
@@ -1502,7 +1494,6 @@ pnpm tauri build
 **Checklist sau cài:**
 - [ ] Camera hiện ảnh OK
 - [ ] Quẹt thẻ hiện mã OK
-- [ ] In thử 1 vé OK
 - [ ] Tạo thử 1 session OK
 - [ ] Phone-home license OK
 
@@ -1516,7 +1507,6 @@ pnpm tauri build
 | License status | Active, expired, suspended |
 | Last phone-home | Ai không check-in > 7 ngày |
 | App version | Ai chưa update |
-| Usage metrics | Số session, số xe (opt-in) |
 | Crash reports | Lỗi phổ biến (opt-in) |
 
 **Alert tự động:**
@@ -1533,7 +1523,7 @@ pnpm tauri build
 | Backup cloud | 50.000đ |
 | **Tổng** | **~300.000đ/tháng** |
 
-Cho dù có 1 khách hay 50 khách → chi phí gần như nhau (VPS nhỏ là đủ).
+Cho dù có 1 khách hay 50 khách → chi phí gần như nhau.
 
 ---
 
@@ -1576,9 +1566,9 @@ Cho dù có 1 khách hay 50 khách → chi phí gần như nhau (VPS nhỏ là �
 ### 16.1 Checklist trước khi bắt đầu
 
 **Quyết định:**
-- [ ] Đã chốt dùng **Tauri (Rust + Vue)** chưa? Hay Python/Node?
+- [x] Dùng **Tauri (Rust + Vue)** — đã chốt
 - [ ] Bạn đã biết Rust chưa? (Nếu chưa → có 2-3 tháng học trước)
-- [ ] Đã chốt mô hình license (desktop + phone-home) chưa?
+- [x] License model: desktop + phone-home — đã chốt
 
 **Phần cứng:**
 - [ ] Đã mua camera Dahua IPC-HFW2239S (3.6mm) chưa?
@@ -1594,16 +1584,20 @@ Cho dù có 1 khách hay 50 khách → chi phí gần như nhau (VPS nhỏ là �
 - [ ] Cài VS Code + rust-analyzer + Volar (Vue)
 - [ ] Tạo repo Git
 
-### 16.2 Câu hỏi mở cần quyết định
+### 16.2 Quyết định đã chốt
 
-| # | Câu hỏi | Lựa chọn |
+| # | Câu hỏi | Quyết định |
 |---|---|---|
-| 1 | Có làm máy in nhiệt trong v1.0 không? | Có / Không |
-| 2 | Có làm vé QR (ngoài thẻ RFID) không? | Có / Không |
-| 3 | Có làm app mobile cho manager không? | v2.0 |
-| 4 | Có làm báo cáo realtime online không? | Không (v1.0 local) |
-| 5 | Khách VIP có cần xử lý riêng không? | Có (fee=0) |
-| 6 | Có làm đa ngôn ngữ (Anh/Việt) không? | Không (v1.0 tiếng Việt) |
+| 1 | Máy in nhiệt trong v1.0? | ❌ Không |
+| 2 | Vé QR? | ❌ Không |
+| 3 | App mobile? | ❌ Không |
+| 4 | Báo cáo realtime online? | ❌ Không |
+| 5 | Xử lý khách VIP? | ✅ Có — VIP = vé tháng (qua notes) |
+| 6 | Đa ngôn ngữ? | ❌ Không — chỉ tiếng Việt |
+| 7 | Loại thẻ | Chỉ 2: `monthly` + `guest` |
+| 8 | Vé tháng qua đêm | Miễn phí 24/7 |
+| 9 | Hạ tầng | Desktop app (Tauri) + license server |
+| 10 | Kiến trúc barrier | Tách rời hoàn toàn, bảo vệ bấm nút |
 
 ### 16.3 Tài liệu tham khảo
 
@@ -1616,13 +1610,26 @@ Cho dù có 1 khách hay 50 khách → chi phí gần như nhau (VPS nhỏ là �
 
 ---
 
-## ✅ Bản spec này đã sẵn sàng để bắt đầu triển khai
+## ✅ Spec v2.0 — Sẵn sàng triển khai
 
-**Bước tiếp theo bạn nên làm:**
+**Tóm tắt thay đổi so với v1.0:**
 
-1. **Đọc lại toàn bộ spec** — note lại chỗ chưa rõ hoặc muốn thay đổi
-2. **Trả lời 6 câu hỏi mở** ở mục 16.2
-3. **Chốt quyết định Rust vs Python** (dựa trên kinh nghiệm của bạn)
-4. **Bắt đầu Milestone 1 (PoC)** — mua 1 bộ phần cứng, thử đọc thẻ + chụp ảnh
+| Hạng mục | v1.0 | v2.0 | Tác động |
+|---|---|---|---|
+| Máy in nhiệt | Có | ❌ Bỏ | -2 triệu, -1 tuần |
+| Vé QR | Có | ❌ Bỏ | -3 ngày |
+| App mobile | Có (v2) | ❌ Bỏ | -2 tuần |
+| Báo cáo online | Có | ❌ Bỏ | -1 tuần |
+| Đa ngôn ngữ | Có | ❌ Bỏ | -3 ngày |
+| Loại thẻ | 3 (monthly/guest/vip) | 2 (monthly/guest) | Đơn giản hóa |
+| VIP | Logic riêng | = Vé tháng (qua notes) | Đơn giản hóa |
+| Timeline | ~5 tháng | **~3 – 3.5 tháng** | **-1.5 tháng** |
+| Chi phí/làn | ~24-30 triệu | **~22-30 triệu** | **-2 triệu** |
 
-Nếu bạn muốn tôi đi sâu vào bất kỳ phần nào — code mẫu Rust chi tiết, schema đầy đủ, UI mockup chi tiết, hay license server FastAPI — chỉ cần nói. Đây là bản đặc tả "sống", sẽ được cập nhật khi bạn phát hiện điểm cần thay đổi trong quá trình làm.
+**Bước tiếp theo:**
+
+1. **Mua phần cứng PoC** (1 bộ tối thiểu): camera + đầu đọc + thẻ + mini PC
+2. **Setup môi trường Tauri** trên Windows
+3. **Bắt đầu Milestone 1** — PoC trong 2 tuần
+
+Bạn muốn tôi giúp gì tiếp — **code mẫu PoC đầy đủ** (Rust + Vue cho milestone 1), **hướng dẫn setup môi trường Tauri trên Windows**, hay **danh sách mua hàng cụ thể với link**?

@@ -2,7 +2,7 @@ BEGIN;
 
 CREATE TABLE cards (
     id              TEXT PRIMARY KEY,
-    card_type       TEXT NOT NULL CHECK(card_type IN ('monthly', 'guest', 'vip')),
+    card_type       TEXT NOT NULL CHECK(card_type IN ('monthly', 'guest')),
     display_code    TEXT NOT NULL,
     owner_name      TEXT,
     owner_phone     TEXT,
@@ -42,7 +42,7 @@ CREATE TABLE sessions (
     duration_minutes    INTEGER,
     fee                 INTEGER DEFAULT 0,
     fee_collected       INTEGER DEFAULT 0,
-    payment_method      TEXT DEFAULT 'cash' CHECK(payment_method IN ('cash', 'transfer', 'free')),
+    payment_method      TEXT DEFAULT 'cash' CHECK(payment_method IN ('cash', 'free')),
     status              TEXT DEFAULT 'active' CHECK(status IN ('active', 'completed', 'cancelled', 'lost_card')),
     notes               TEXT,
     created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP
