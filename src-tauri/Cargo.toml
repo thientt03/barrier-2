@@ -1,0 +1,25 @@
+[package]
+name = "parking-app"
+version = "0.1.0"
+description = "Hệ thống quản lý bãi đỗ xe"
+edition = "2021"
+
+[lib]
+name = "parking_app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "0.31", features = ["bundled"] }
+uuid = { version = "1", features = ["v4"] }
+chrono = "0.4"
+image = { version = "0.25", default-features = false, features = ["jpeg"] }
+base64 = "0.22"
+bcrypt = "0.15"
+thiserror = "1"
+serialport = { version = "4", default-features = false }
